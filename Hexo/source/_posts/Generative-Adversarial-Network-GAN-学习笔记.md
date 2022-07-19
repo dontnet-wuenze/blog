@@ -168,6 +168,8 @@ WGAN 的算法在原始 GAN 的只需要四步改进:
 
 * D 的输出不要 sigmoid 激活函数
 
+* 优化器不要用 Adam, 用 SGD
+
 <div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/wgan.png" width="90%", heigt="90%" ></div>
 
     

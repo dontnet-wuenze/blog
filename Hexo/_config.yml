@@ -153,10 +153,3 @@ image_minifier:
   optimizationLevel: 2
   pngquant: false
   progressive: false
-
-post:
-  # 添加数学公式
-  math:
-    enable: true
-    specific: false
-    engine: mathjax

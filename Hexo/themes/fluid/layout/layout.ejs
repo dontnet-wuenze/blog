@@ -23,6 +23,29 @@ var colorSchema = theme.dark_mode && theme.dark_mode.enable && theme.dark_mode.d
   <canvas id="background" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:-1" ></canvas> 
   <script src="/js/background.js"></script>
 
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      menuSettings: {
+        zoom: "None"
+      },
+      showMathMenu: false,
+      jax: ["input/TeX","output/CommonHTML"],
+      extensions: ["tex2jax.js"],
+      TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js"],
+        equationNumbers: {
+          autoNumber: "AMS"
+        }
+      },
+      tex2jax: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"]]
+      }
+    });
+  </script>
+  
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
+
   <main>
     <% if(is_post() || page.layout === '404') { %>
       <%- body %>
