@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>Generative Adversarial Network(GAN)学习笔记</title>
+    <link href="/2022/07/18/Generative-Adversarial-Network-GAN-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    <url>/2022/07/18/Generative-Adversarial-Network-GAN-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Generative-Adversarial-Network-GAN-学习笔记"><a href="#Generative-Adversarial-Network-GAN-学习笔记" class="headerlink" title="Generative Adversarial Network(GAN)学习笔记"></a>Generative Adversarial Network(GAN)学习笔记</h1><p>重度参考李宏毅老师的课程:</p><p><a href="https://www.youtube.com/watch?v=4OWp0wDu6Xw&amp;list=PLJV_el3uVTsMhtt7_Y6sgTHGHp1Vb2P2J&amp;index=14&amp;ab_channel=Hung-yiLee">https://www.youtube.com/watch?v=4OWp0wDu6Xw&amp;list=PLJV_el3uVTsMhtt7_Y6sgTHGHp1Vb2P2J&amp;index=14&amp;ab_channel=Hung-yiLee</a></p><h2 id="直观理解"><a href="#直观理解" class="headerlink" title="直观理解"></a>直观理解</h2><p>从理解的角度来讲, GAN 由一个生成器和一个判别器组成。训练的过程就是生成器和判别器对抗的过程。判别器希望能分别出生成器生成的图片和真实的图片。而生成器则希望”以假乱真”, 使最终的判别器无法区分真实的图片和生成的图片。理想的情况下，最终的判别器具有很高的辨认能力, 而生成器生成的图片则几乎无法与真实图片区分。</p><div align="center" size="80%"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/zhiguanlijie.png" width="80%", heigt="80%"></div><p>&emsp;</p><p>比如一开始判别器会学习到真实图片都有眼睛, 这样生成器就会学习生成眼睛的能力, 之后判别器又会学习到真实的头像都有嘴巴, 生成器为了以假乱真也要学会生成嘴巴, 这就是一个对抗的过程, 最终使生成器具有生成能力。</p><h2 id="训练过程"><a href="#训练过程" class="headerlink" title="训练过程"></a>训练过程</h2><p>训练过程很清晰, 首先固定生成器的参数, 对判别器进行训练。 之后固定判别器的参数, 对生成器进行训练。这样迭代多轮后直到训练结束。</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/algorithm1.png" width="80%", heigt="80%"></div><h2 id="理论介绍"><a href="#理论介绍" class="headerlink" title="理论介绍"></a>理论介绍</h2><h3 id="目标函数"><a href="#目标函数" class="headerlink" title="目标函数"></a>目标函数</h3><p>我们现在有一个生成器 G, 我们最终的目标就是希望 G 生成的分布和真实 Data 的分布是相似的。</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/theoryimage.png" width="80%", heigt="80%"></div><p>&emsp;</p><p>写成公式就是下面的式子:</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/theoryshizi.png" width="40%", heigt="70%"></div><h3 id="求解分布-Diversity"><a href="#求解分布-Diversity" class="headerlink" title="求解分布 Diversity"></a>求解分布 Diversity</h3><p>而问题在于, 我们有什么方法能求得这两个分布之间的 Diversity?</p><p>首先我们肯定没法直接去求分布的积分，因此可以采样。</p><p>一个比较直观的想法是用判别器去对采样的结果进行分类，如果分类准确率高就说明两者的分布相差大,好分辨。</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/zhiguanbianbie.png" width="80%", heigt="80%"></div>          &emsp;<p>公式化的写法就是我们要训练一个判别器, 而 V(G,D) 推导出来事实上就是两个分布间的 JS 散度。我们想要判别器的效果好, 就是要最大化 V。</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/bianbieqi.png" width="80%", heigt="80%"></div><p>&emsp;</p><p>从另一个角度看, V 其实是交叉熵的负数, 因此我们要最大化 V, 也就是减小判别器的 Loss。</p><p>因为 V 越大，代表判别的准确度越高, 因此回到上面的式子, 最小化 Diversity, 也就是最小化 V。</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/zuixiaohua.png" width="40%", heigt="80%"></div><h2 id="GAN-的缺陷"><a href="#GAN-的缺陷" class="headerlink" title="GAN 的缺陷"></a>GAN 的缺陷</h2><h3 id="JS-散度的局限性"><a href="#JS-散度的局限性" class="headerlink" title="JS 散度的局限性"></a>JS 散度的局限性</h3><p>可以看到, 我们在上面的公式中使用了 JS 散度来比较两个分布的相似度, 但这会带来问题, 因为 JS 散度没法评估两个不重合分布的相似度。</p><h3 id="为什么两个分布不重合"><a href="#为什么两个分布不重合" class="headerlink" title="为什么两个分布不重合"></a>为什么两个分布不重合</h3><h4 id="1-数据的性质"><a href="#1-数据的性质" class="headerlink" title="1. 数据的性质"></a>1. 数据的性质</h4><p>图片的分布在高维空间中可能是一条线, 或者只有很小一部分,这是因为大部分的空间中的点并不能组成一个完整的图像。因此两个分布只会有很少的部分相交, 可以忽略不记。</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/fenbuxiangjiao.png" width="45%", heigt="45%"></div><h4 id="2-采样"><a href="#2-采样" class="headerlink" title="2. 采样"></a>2. 采样</h4><p>从分布中采样出的点是很少一部分, 即使整体分布有重合，采样的稀疏点也很容易被判别成两个不重合的分布。</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/sample.png" width="45%", heigt="45%"></div><h3 id="JS-散度的问题"><a href="#JS-散度的问题" class="headerlink" title="JS 散度的问题"></a>JS 散度的问题</h3><p>只要两个分布不重合, JS 散度恒为 log2, 这就导致判别器没法训练。</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/jsproblem.png" width="80%", heigt="80%"></div><h2 id="Wasserstein-distance-推土机距离"><a href="#Wasserstein-distance-推土机距离" class="headerlink" title="Wasserstein distance(推土机距离)"></a>Wasserstein distance(推土机距离)</h2><p>为了解决这个问题, 我们改用 Wasserstein distance 来判断两个分布的相似度。这个距离的定义就是把一个分布变成另一个分布需要移动的最小平均距离。</p><p>可以看到, 此时分布间的距离就会越来越近了。</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/wdistance.png" width="80%", heigt="80%"></div><h2 id="WGAN"><a href="#WGAN" class="headerlink" title="WGAN"></a>WGAN</h2><h3 id="距离公式"><a href="#距离公式" class="headerlink" title="距离公式"></a>距离公式</h3><p>Wasserstein distance 也有对应的推导式子:</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/wshizi.png" width="60%", heigt="80%"></div><p>&emsp;</p><p>可以看到, 这里对 D 有一个限制, 直白的说就是要求 D 是平滑的。</p><p>因为如果没有限制, D 就无法收敛了。(两个值会无限的增大和减小)</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/shoulian.png"width="60%", heigt="60%" ></div><h3 id="Lipschitz-Function"><a href="#Lipschitz-Function" class="headerlink" title="Lipschitz Function"></a>Lipschitz Function</h3><p>事实上 D 是要满足这个 Function 的性质, 也就是下面这个式子:</p><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/Lip.png"width="40%", heigt="40%" ></div><p>而 D 就是 K = 1 的情况。</p><h3 id="如何保证-D-是平滑的"><a href="#如何保证-D-是平滑的" class="headerlink" title="如何保证 D 是平滑的"></a>如何保证 D 是平滑的</h3><p>有几种方法使 D 拥有平滑的性质:</p><ul><li><p>Original WGAN → Weight</p><p>  可以限制 w 的值在 [-c, c] 之间, 这样相当于限制了 D 的上下界。</p></li><li><p>Improved WGAN → Gradient Penalty</p><p>  上面的 Lipschitz 性质有一个等价条件, 就是 D 对 x 的梯度都是小于等于 1 的</p>  <div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/gp.png"width="40%", heigt="40%" ></div><p>  很容易理解的方法就是对梯度加一个惩罚项。</p>  <div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/jifen1.png" width="40%", heigt="40%" ></div><p>  有一个问题在于我们没法对所有的X进行积分, 因此一个替代的方法是用 P<sub>data</sub> 和 P<sub>G</sub> 中间的 P<sub>penalty</sub> 的分布下的 X 作为惩罚项。</p>  <div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/ppen.png" width="60%", heigt="60%" ></div><p>  这样做看起来也确实是有一定道理的。 因为最终 P<sub>data</sub> 和 P<sub>G</sub> 逐渐靠近, 也只有他们中间的分布才会有影响。</p><p>  实验中有一个更好的收敛方法是梯度接近 1 是最好的。</p>  <div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/improve.png" width="60%", heigt="60%" ></div><p>  <a href="https://arxiv.org/abs/1704.00028">https://arxiv.org/abs/1704.00028</a></p></li><li><p>Spectral Normalization → Keep gradient norm smaller than 1 everywhere</p><p>  这个方法可以保证每个梯度都是小于 1 的</p><p>  <a href="https://arxiv.org/abs/1802.05957">https://arxiv.org/abs/1802.05957</a></p></li></ul><h2 id="WGAN-algorithm"><a href="#WGAN-algorithm" class="headerlink" title="WGAN algorithm"></a>WGAN algorithm</h2><p>WGAN 的算法在原始 GAN 的只需要四步改进:</p><ul><li><p>修改 D 的目标函数</p></li><li><p>D 的训练添加 Weight clipping / Gradient Penalty</p></li><li><p>修改 G 的目标函数</p></li><li><p>D 的输出不要 sigmoid 激活函数</p></li></ul><div align="center"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Generative Adversarial Network(GAN)/wgan.png" width="90%", heigt="90%" ></div>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>深度学习</tag>
+      
+      <tag>GAN</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>使用yfinance获取美股数据的时报错</title>
+    <link href="/2022/07/13/%E4%BD%BF%E7%94%A8yfinance%E8%8E%B7%E5%8F%96%E7%BE%8E%E8%82%A1%E6%95%B0%E6%8D%AE%E7%9A%84%E6%97%B6%E6%8A%A5%E9%94%99/"/>
+    <url>/2022/07/13/%E4%BD%BF%E7%94%A8yfinance%E8%8E%B7%E5%8F%96%E7%BE%8E%E8%82%A1%E6%95%B0%E6%8D%AE%E7%9A%84%E6%97%B6%E6%8A%A5%E9%94%99/</url>
+    
+    <content type="html"><![CDATA[<p>报错信息:<br><code>No data found for this date range, symbol may be delisted</code></p><p>开始以为是股票信息出了问题，之后找到原因是大陆不能访问雅虎财经了，所以使用 yf.download时需要添加代理访问。</p><p>作者给出了添加代理的方法</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> yfinance <span class="hljs-keyword">as</span> yf<br><br>msft = yf.Ticker(<span class="hljs-string">&quot;MSFT&quot;</span>)<br><br>msft.history(..., proxy=<span class="hljs-string">&quot;PROXY_SERVER&quot;</span>)<br>msft.get_actions(proxy=<span class="hljs-string">&quot;PROXY_SERVER&quot;</span>)<br>msft.get_dividends(proxy=<span class="hljs-string">&quot;PROXY_SERVER&quot;</span>)<br>msft.get_splits(proxy=<span class="hljs-string">&quot;PROXY_SERVER&quot;</span>)<br>msft.get_balance_sheet(proxy=<span class="hljs-string">&quot;PROXY_SERVER&quot;</span>)<br>msft.get_cashflow(proxy=<span class="hljs-string">&quot;PROXY_SERVER&quot;</span>)<br>msft.option_chain(..., proxy=<span class="hljs-string">&quot;PROXY_SERVER&quot;</span>)<br></code></pre></td></tr></table></figure><p>具体代码</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">stock_price = yf.download(<span class="hljs-string">&quot;AAPL&quot;</span>, start=<span class="hljs-string">&quot;2017-01-01&quot;</span>, end=<span class="hljs-string">&quot;2017-04-30&quot;</span>, proxy=<span class="hljs-string">&quot;http://127.0.0.1:7890&quot;</span>)<br></code></pre></td></tr></table></figure><p>这个代理地址是我的vpn的端口，问题解决</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>实验室</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>智能投顾</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>VAE Auto-Encoding Variational Bayes 学习笔记</title>
+    <link href="/2022/07/11/VAE-Auto-Encoding-Variational-Bayes-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    <url>/2022/07/11/VAE-Auto-Encoding-Variational-Bayes-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    
+    <content type="html"><![CDATA[<h1 id="VAE-学习笔记"><a href="#VAE-学习笔记" class="headerlink" title="VAE 学习笔记"></a>VAE 学习笔记</h1><p>李宏毅老师的 <a href="https://www.bilibili.com/video/av15889450/?p=33">课程视频</a> 讲的很详细，记录一下</p><h2 id="直观理解"><a href="#直观理解" class="headerlink" title="直观理解"></a>直观理解</h2><p>VAE 的大体结构和 Auto-Encoder 类似<br>区别在于 VAE 在生成的过程中加入了噪音, 使模型具有了生成能力</p><div align=center><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/noise.jpg"></div><h2 id="VAE-的构造"><a href="#VAE-的构造" class="headerlink" title="VAE 的构造"></a>VAE 的构造</h2><p>从下图的结构可以看出，VAE 的 Encoder 会求出一个隐藏层的分布，然后对这个分布进行采样，生成一个 X’, 理想的情况下，这个 X’ 和 X 的距离应该是很小的</p><div align=center><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/model.jpg"></div><p>但是问题在于，如果我们优化函数只优化最终结果的距离，那么X’最准确的情况的下分布的方差会变为 0, 此时的 VAE 事实上就退化成了 auto-encoder。 因此我们需要在 Loss 中加入对分布的限制, 从而达到较好的生成效果。</p><h2 id="公式推导"><a href="#公式推导" class="headerlink" title="公式推导"></a>公式推导</h2><p>我们的目标是求解</p><div align=center><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/maximum.png"></div><p>这个式子可以进行变换:</p><div align=center><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/trans.png"></div><p>于是我们得到了一个 logP(x)的下界:</p><div align=center><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Lb.png"></div><p>此时原式化为: </p><div align=center><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/yuanshi.png"></div><p>这里要补充一点，当我们在优化 Lb 的时候, KL散度是像0趋近的，这样我们logP(x)就会接近优化的下界。</p><p>注意到 </p><div align=center><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/lbtuidao.png"></div><p>因此只需要构造两个求解器，分别是 Encoder 和 Decoder</p><p>其中 Encoder 求解的是 q(z|x) 的分布，我们希望所有的 q(z|x) 都能近似 p(z) 的分布。z 的分布在 VAE 中定义成 N(0, 1)</p><div align=center><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Encoder.jpg"></div><p>Decoder 求解的是 p(x|z) 的分布</p><div align=center><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/Decoder.jpg"></div><p>至此证明完毕</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>实验室</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>深度学习</tag>
+      
+      <tag>笔记</tag>
+      
+      <tag>VAE</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>CMU 149 lab1 Parallel Fractal Generation Using Threads</title>
+    <link href="/2022/07/10/lab1-Parallel-Fractal-Generation-Using-Threads/"/>
+    <url>/2022/07/10/lab1-Parallel-Fractal-Generation-Using-Threads/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>CMU149 lab0 环境搭建</title>
+    <link href="/2022/07/10/CMU149-lab0-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    <url>/2022/07/10/CMU149-lab0-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
+    
+    <content type="html"><![CDATA[<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>附上官方地址:</p><p><a href="https://github.com/stanford-cs149/asst1">https://github.com/stanford-cs149/asst1</a></p><h2 id="安装-ISPC"><a href="#安装-ISPC" class="headerlink" title="安装 ISPC"></a>安装 ISPC</h2><p>首先需要安装 ISPC</p><p>我这里是 win11 使用 wsl 虚拟机<br>如果虚拟机或者 linux 系统一样的操作</p><p><code>wget https://github.com/ispc/ispc/releases/download/v1.16.1/ispc-v1.16.1-linux.tar.gz</code></p><p>下载后解压</p><p><code>tar -xvf ispc-v1.16.1-linux.tar.gz</code></p><h2 id="添加环境变量"><a href="#添加环境变量" class="headerlink" title="添加环境变量"></a>添加环境变量</h2><p><code>export PATH=$PATH:$&#123;HOME&#125;/ispc-v1.16.1-linux/bin</code></p><p>如果只在命令行里输入的话是临时的，下次就没有了<br>所以我们最好添加永久的环境变量</p><p>bash 用户可以添加到 ~/.bashrc 文件中</p><p>我这里在 zsh 添加了永久的环境变量</p><p>添加后输入</p><p><code>source $HOME/.zshrc</code></p><p>使环境变量生效</p><p>如果 lab1 的样例程序编译通过就代表安装成功了</p><p><a href="http://bossalex.top/2022/07/10/lab1-Parallel-Fractal-Generation-Using-Threads/">lab1 Parallel Fractal Generation Using Threads</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>课程学习</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CMU 149</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>博客迁移公告</title>
+    <link href="/2022/07/10/%E5%8D%9A%E5%AE%A2%E8%BF%81%E7%A7%BB%E5%85%AC%E5%91%8A/"/>
+    <url>/2022/07/10/%E5%8D%9A%E5%AE%A2%E8%BF%81%E7%A7%BB%E5%85%AC%E5%91%8A/</url>
+    
+    <content type="html"><![CDATA[<p>Hello 大家好, 欢迎来到大财主的代码乐园</p><p>之前的博客记录可以访问</p><p><a href="https://www.cnblogs.com/wuenze/">https://www.cnblogs.com/wuenze/</a></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  
+</search>
