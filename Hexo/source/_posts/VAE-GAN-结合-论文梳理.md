@@ -1,12 +1,14 @@
+---
 title: VAE-GAN 结合 论文梳理
 author: boss
-date: 2022-07-19 16:52:00
 tags:
- - GAN
- - VAE
- - 深度学习
-categories: 
- - 实验室
+  - GAN
+  - VAE
+  - 深度学习
+categories:
+  - 实验室
+abbrlink: 3dc06956
+date: 2022-07-19 16:52:00
 ---
 
 # VAE-GAN 结合 论文梳理
@@ -78,6 +80,9 @@ AAE 使用一个对抗网络来替代 VAE 中后验分布的 KL 散度
 使&nbsp; `$q(z|x) 和 p(x)$` &nbsp;不断靠近
 
 <div align="center" size="80%"><img src="https://cdn.jsdelivr.net/gh/dontnet-wuenze/picbed/VAE-GAN结合/AAE.png" width="80%", heigt="80%"></div>
+
+#### 优点
+- 相比 VAE 预设了 N(0,1) 的高斯分布, P(z)可以是任意的分布。
 
 #### 训练过程
 - Reconstruction: 训练 Encoder 和 Decoder

@@ -1,10 +1,11 @@
 ---
 title: 使用yfinance获取美股数据的时报错
-date: 2022-07-13 10:42:19
-tags: 
+tags:
   - 智能投顾
 categories:
   - 实验室
+abbrlink: ce066d14
+date: 2022-07-13 10:42:19
 ---
 
 报错信息:

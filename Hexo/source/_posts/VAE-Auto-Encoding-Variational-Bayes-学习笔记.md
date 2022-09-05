@@ -1,3 +1,4 @@
+---
 title: VAE Auto-Encoding Variational Bayes 学习笔记
 author: boss
 tags:
@@ -6,6 +7,7 @@ tags:
   - 笔记
 categories:
   - 实验室
+abbrlink: 2abd261b
 date: 2022-07-11 13:35:00
 ---
 

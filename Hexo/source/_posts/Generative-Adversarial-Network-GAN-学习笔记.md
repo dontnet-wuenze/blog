@@ -1,11 +1,13 @@
+---
 title: Generative Adversarial Network(GAN)学习笔记
 author: boss
-date: 2022-07-18 18:22:04
 tags:
- - GAN
- - 深度学习
+  - GAN
+  - 深度学习
 categories:
- - 实验室
+  - 实验室
+abbrlink: f4cb8fcb
+date: 2022-07-18 18:22:04
 ---
 
 # Generative Adversarial Network(GAN)学习笔记

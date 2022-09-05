@@ -1,9 +1,11 @@
+---
 title: CMU149 lab0 环境搭建
 author: boss
 tags:
   - CMU 149
 categories:
   - 课程学习
+abbrlink: e401529b
 date: 2022-07-10 23:33:00
 ---
 
